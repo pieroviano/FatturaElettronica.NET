@@ -12,7 +12,11 @@ namespace FatturaElettronica
         public static ValidationResult Validate<T>(this T obj) where T : Common.BaseClassSerializable
         {
             var t = typeof(T);
+#if NET40
+            if (t.IsAbstract) t = obj.GetType();
+#else
             if(t.GetTypeInfo().IsAbstract) t = obj.GetType();
+#endif
             var name = (t.FullName.Contains("Semplificata") ? "Semplificata." : string.Empty) + t.Name;
 
             var validator = ValidatorsCache.GetOrAdd(name, n =>
